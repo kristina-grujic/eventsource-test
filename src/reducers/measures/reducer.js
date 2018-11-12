@@ -1,4 +1,4 @@
-import produce from "immer"
+import produce from 'immer';
 
 const initialState = {
   measures: [],
@@ -11,7 +11,7 @@ const measureReducer = (state = initialState, action) =>
         break;
       }
     }
-  })
+  });
 
 
 export default measureReducer;
