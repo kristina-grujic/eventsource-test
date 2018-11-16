@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 
@@ -6,7 +7,13 @@ const INCREASE_COLOR = 'green';
 const DECREASE_COLOR = 'red';
 const NO_CHANGE_COLOR = 'black';
 
+/**
+ * Component for visualising one measure from store
+ */
 class RowVisualisator extends React.Component {
+  /**
+   * Lifecycle function preparing of component for use
+   */
   constructor(props) {
     super(props);
     this.state = {
@@ -15,6 +22,9 @@ class RowVisualisator extends React.Component {
     };
   }
 
+  /**
+   * Lifecycle function deciding whether measure value was updated or not
+   */
   static getDerivedStateFromProps(nextProps, currentState) {
     const currentValue = currentState.currentMeasures.last() && currentState.currentMeasures.last().value;
     const nextValue = nextProps.measurements.last().value;
@@ -42,33 +52,15 @@ class RowVisualisator extends React.Component {
       // don't highlight old values
       return {
         updatedColor: NO_CHANGE_COLOR,
-      }
+      };
     }
   }
 
-  render() {
-    const { name, measurements, unit } = this.props;
-    const { updatedColor } = this.state;
-    return (
-      <TableRow>
-        <TableCell>
-          { name }
-        </TableCell>
-        <TableCell style={{
-          color: updatedColor,
-          fontWeight: updatedColor === 'black' ? 'normal' : 'bold'
-        }}>
-          { this.renderValue(measurements.last().value) }
-        </TableCell>
-        <TableCell>
-          { unit }
-        </TableCell>
-      </TableRow>
-    );
-  }
-
+  /**
+   * Function to render various types of values
+   */
   renderValue(value) {
-    switch(this.props.name) {
+    switch (this.props.name) {
       case 'Location': {
         return this.renderLocation(value);
       }
@@ -82,17 +74,60 @@ class RowVisualisator extends React.Component {
     }
   }
 
+  /**
+   * Specialized function to render location values
+   */
   renderLocation(value) {
     // 8 digits for precision of 1.11 mm
     return (
       <span>
-        <span>Lat. : {value[0].toFixed(8)}</span>
+        <span>
+          Lat. : {value[0].toFixed(8)}
+        </span>
         <br />
-        <span>Long. : {value[1].toFixed(8)}</span>
+        <span>
+          Long. : {value[1].toFixed(8)}
+        </span>
       </span>
-    )
+    );
+  }
+
+  /**
+   * Rendering of measure row into a table
+   */
+  render() {
+    const { name, measurements, unit } = this.props;
+    const { updatedColor } = this.state;
+    return (
+      <TableRow>
+        <TableCell>
+          { name }
+        </TableCell>
+        <TableCell
+          style={{
+            color: updatedColor,
+            fontWeight: updatedColor === 'black' ? 'normal' : 'bold'
+          }}
+        >
+          { this.renderValue(measurements.last().value) }
+        </TableCell>
+        <TableCell>
+          { unit }
+        </TableCell>
+      </TableRow>
+    );
   }
 }
+
+RowVisualisator.propTypes = {
+  measurements: PropTypes.array.isRequired,
+  name: PropTypes.string.isRequired,
+  unit: PropTypes.string,
+};
+
+RowVisualisator.defaultProps = {
+  unit: '',
+};
 
 export {
   RowVisualisator,
